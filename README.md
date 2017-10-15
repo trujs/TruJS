@@ -1,2 +1,2 @@
-# trujs
+# TruJS
 The TruJS Repo
