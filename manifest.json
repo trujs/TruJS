@@ -1,0 +1,59 @@
+[{
+  "type": "module"
+  , "name": "TruJS"
+  , "description": "This is a collection of all the TruJS files for testing purposes"
+
+  , "scripts": ""
+  , "module": {
+    "root": [{ "TruJS": [":TruJS"] }]
+    , "global": [":global"]
+    , "document": [":require(\"min-document\")"]
+    , "XMLHttpRequest": [":require(\"w3c-xmlhttprequest\").XMLHttpRequest"]
+    , "customEvent": [":require(\"customevent\")"]
+  }
+
+  , "format": "node"
+
+  , "output": "./build/{name}/index.js"
+}, {
+  "type": "module"
+  , "name": "TruJS"
+  , "description": "This is a collection of all the TruJS files for testing purposes"
+
+  , "scripts": ""
+  , "module": {
+    "root": [{ "TruJS": [":TruJS"] }]
+    , "global": [":window"]
+    , "document": [":document"]
+    , "XMLHttpRequest": [":XMLHttpRequest"]
+    , "customEvent": [":CustomEvent"]
+  }
+
+  , "format": "browser"
+  , "minify": false
+  , "namespace": "TruJS"
+
+  , "output": "./build/{name}/app.js"
+}, {
+  "type": "test"
+  , "name": "TruJS"
+
+  , "scripts": ""
+
+  , "format": "node"
+
+  , "output": "./build/{name}/node-test.json"
+}, {
+  "type": "test"
+  , "name": "TruJS"
+
+  , "scripts": ""
+
+  , "format": "browser"
+
+  , "moduleFile": "app.js"
+  , "moduleName": "TruJS"
+  , "testFile": "browser-test.js"
+
+  , "output": "./build/{name}/"
+}]
