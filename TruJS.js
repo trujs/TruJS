@@ -6,28 +6,43 @@
 * @param {object} scope The starting point.
 */
 function resolvePath(name, scope) {
-    //split the name
     var orig = scope
-    , ns = name.split(SPLIT_PATH)
+    , ns
+    , match
     , parent
     , index
     , path = ""
     , indexKeys = [];
+
+    //pre-compile the indexers
+    name = name.replace(INDXR_PATT, function(match, val) {
+        //if this is not a literal then resolve it
+        if (!LITERAL_PATT.test(val)) {
+            indexKeys.push(val);
+            val = resolvePath(val, orig).value;
+            if (isNill(val)) {
+                val = "";
+            }
+            if (!isNumeric(val)) {
+                val = '"' + val + '"';
+            }
+        }
+        return "[" + val + "]";
+    });
+
+    //split the name using the dot notation
+    ns = name.split(SPLIT_PATH);
+
     //loop through the names
     ns.forEach(function (val, pos) {
         //if we still have a scope
         if (!!scope && !!val) {
-            //if this ends with ] then it's a indexer
-            if (INDX_PATT.test(val)) {
-                val = val.substring(0, val.length - 1);
-                //if this is not a literal then look it up
-                if (!LITERAL_PATT.test(val)) {
-                    indexKeys.push(val);
-                    val = resolvePath(val, orig).value;
-                    if (!isNumeric(val)) {
-                        val = '"' + val + '"';
-                    }
-                }
+            //if this has an indexer in it [] then resolve it
+            INDX_PATT.lastIndex = 0;
+            if ((match = INDX_PATT.exec(val))) {
+                scope = scope[match[1]];
+                path = path + (!!path && "." || "") + match[1];
+                val = match[2];
                 //update the path
                 pos < ns.length && (path = path + '[' + val + ']');
             }
@@ -55,8 +70,9 @@ function resolvePath(name, scope) {
         , "indexKeys": indexKeys
     };
 }
-var SPLIT_PATH = /[.\[]/g
-, INDX_PATT = /.*\]$/
+var SPLIT_PATH = /[.]/g
+, INDXR_PATT = /\[(.+?)\]/g
+, INDX_PATT = /^([^\[]+)\[([^\]]+)\]$/
 , LITERAL_PATT = /^[0-9]+$|^'.*'$|^".*"$/
 , STR_PATT = /^'.*'$|^".*"$/;
 TruJS.resolvePath = resolvePath;
@@ -147,6 +163,41 @@ function removeNulls(o) {
     }
 }
 TruJS.removeNulls = removeNulls;
+
+/**
+* Merges two objects. When they share the same property and the value is a
+* primitive, the value from the first object is used. If the shared property
+* value is an object, then the objects are merged
+* @function
+*/
+function merge(o1, o2) {
+    //loop through the first objects properties
+    Object.keys(o1).forEach(function forEachKey(key) {
+        if (o2.hasOwnProperty(key)) {
+            if (isObject(o1[key]) && isObject(o2[key])) {
+                o1[key] = merge(o1[key], o2[key]);
+                return;
+            }
+        }
+    });
+    //loop through the second objects properties
+    Object.keys(o2).forEach(function forEachKey(key) {
+        if (!o1.hasOwnProperty(key)) {
+            o1[key] = o2[key];
+        }
+    });
+
+    return o1;
+}
+TruJS.merge = merge;
+/**
+* Creates a deep copy of the object
+* @function
+*/
+function copy(o) {
+    return JSON.parse(JSON.stringify(o));
+}
+TruJS.copy = copy;
 
 /**
 * An empty function
