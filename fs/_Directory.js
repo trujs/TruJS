@@ -28,13 +28,18 @@ function _Directory(nodeFs, nodePath, promise) {
     //when the options value is a string create the object with filter:option
     if (typeof options === "string") {
       options = {
-        "filter": options.split(",")
+        "filter": options
       };
     }
     //otherwise, the options value must be an object
     if (typeof options !== "object") {
       options = {};
     }
+    //make the filer an array
+    if (!!options.filter) {
+        options.filter = options.filter.split(",");
+    }
+
     //add the defaults
     applyIf(defaults, options);
 
