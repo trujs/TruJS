@@ -2,7 +2,7 @@
 * Runs a function asynchronously and returns a promise
 * @factory
 */
-function _Async(promise, setTimeout) {
+function _Async(promise) {
 
     /**
     * Executes a function asynchronously
@@ -14,15 +14,11 @@ function _Async(promise, setTimeout) {
     return function Async(fn, args, scope) {
 
         return new Promise(function (resolve, reject) {
-            setTimeout(asyncFn, 0);
-
-            function asyncFn() {
-                try {
-                    resolve(fn.apply(scope, args));
-                }
-                catch(ex) {
-                    reject(ex);
-                }
+            try {
+                resolve(fn.apply(scope || null, args));
+            }
+            catch(ex) {
+                reject(ex);
             }
         });
     };
