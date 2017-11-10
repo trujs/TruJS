@@ -242,7 +242,7 @@ function testTruJS11(arrange, act, assert, trujs) {
         test('The obj variable is not empty').value(isobj).isFalse();
     });
 }
-/**[@test({ "title": "isElement: test one element and one non-element" })]*/
+/**[@test({ "title": "isElement: test one element and one non-element", "format": "browser" })]*/
 function testTruJS12(arrange, act, assert, document, trujs) {
     //shared variables
     var el, nonel, isel1, isel2;
@@ -264,7 +264,7 @@ function testTruJS12(arrange, act, assert, document, trujs) {
         test('The nonel variable is not an element').value(isel2).isFalse();
     });
 }
-/**[@test({ "title": "isEvent: test one event and one non-event" })]*/
+/**[@test({ "title": "isEvent: test one event and one non-event", "format": "browser" })]*/
 function testTruJS13(arrange, act, assert, customEvent, trujs) {
     //shared variables
     var evnt, nonevnt, isevnt1, isevnt2;
@@ -418,5 +418,78 @@ function testTruJS19(arrange, act, assert, trujs) {
     assert(function (test) {
         test('The `base` key should be a prototype key').value(is1).isTrue();
         test('The `obj` key should not be a prototype key').value(is2).isFalse();
+    });
+}
+/**[@test({ "title": "merge: " })]*/
+function testTruJS20(arrange, act, assert, trujs) {
+    var obj1, obj2, merged;
+
+    arrange(function () {
+        //setup the objects
+        obj1 = {
+            var1: "test1"
+            , var2: {
+                "in1": "test2.1"
+            }
+        };
+        obj2 = {
+            var1: "test2"
+            , var2: {
+                "in2": "test2.2"
+            }
+            , var4: null
+        };
+    });
+
+    act(function () {
+        merged = trujs.merge(obj1, obj2);
+    });
+
+    assert(function (test) {
+        test('merged should be')
+        .value(merged)
+        .stringify()
+        .equals("{\"var1\":\"test1\",\"var2\":{\"in1\":\"test2.1\",\"in2\":\"test2.2\"},\"var4\":null}");
+
+    });
+}
+/**[@test({ "title": "resolvePath" })]*/
+function testTruJS21(arrange, act, assert, trujs) {
+    var obj, res;
+
+    arrange(function () {
+        obj = {
+            "level1": {
+                "level2": [{
+                    "value": "value1"
+                }, {
+                    "value": "value2"
+                }]
+                , "key": 1
+            }
+        };
+    });
+
+    act(function () {
+        res = trujs.resolvePath("level1.level2[level1.key].value", obj);
+    });
+
+    assert(function (test) {
+        test("res.value should be level2[1].value")
+        .value(res.value)
+        .equals(obj.level1.level2[1].value);
+
+        test("res.parent should be level2[1]")
+        .value(res.parent)
+        .equals(obj.level1.level2[1]);
+
+        test("res.index should be 'value'")
+        .value(res.index)
+        .equals("value");
+
+        test("res.path should be")
+        .value(res.path)
+        .equals("level1.level2[1].value");
+
     });
 }
