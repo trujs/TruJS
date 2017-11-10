@@ -1,4 +1,4 @@
-/**[@test({ "title": "TruJS.func.Stack: test the stack nested inside 3 functions" })]*/
+/**[@test({ "title": "TruJS.func.Stack: test the stack nested inside 3 functions", "format": "browser" })]*/
 function testStack1(arrange, act, assert, module) {
     var stack, func, res;
 
