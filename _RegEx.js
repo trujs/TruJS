@@ -38,6 +38,7 @@ function _RegEx() {
         if (val == null) {
             return matches;
         }
+        patt.lastIndex = 0;
         while ((match = patt.exec(val)) !== null) {
             //see if we need to stop the loop
             if (patt.global && pos === patt.lastIndex) {
