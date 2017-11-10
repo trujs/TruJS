@@ -417,13 +417,10 @@ function (functionInspector, objectLookup, iocEntry) {
             //see if the name is a path
             if (name.indexOf('.') !== -1) {
                 var path = name.split('.');
+                //remove the last segment
                 name = path.pop();
                 path = path.join('.');
                 parent = objectLookup(dependencies, path);
-            }
-            //check to see if the dependency already exists
-            if (dependencies.hasOwnProperty(name)) {
-                throw new Error("The name '" + name + "' already exists in the dependency collection");
             }
 
             parent[name] = entry;
