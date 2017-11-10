@@ -94,7 +94,7 @@ function testArray4(arrange, act, assert, module) {
       test('The ar3 type should be null').value(ar3Type).isNull();
     });
 }
-/**[@test({ "title": "TruJS.Array.ofElements: create some objects and test" })]*/
+/**[@test({ "title": "TruJS.Array.ofElements: create some objects and test", "format": "browser" })]*/
 function testArray5(arrange, act, assert, element, module) {
     var ofElements, test1, test2, test3, test4, res1, res2, res3, res4;
 
