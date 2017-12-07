@@ -12,14 +12,16 @@ function _Async(promise) {
     * @param {scope} [scope] Optional. The scope
     */
     return function Async(fn, args, scope) {
-
-        return new Promise(function (resolve, reject) {
-            try {
-                resolve(fn.apply(scope || null, args));
-            }
-            catch(ex) {
-                reject(ex);
-            }
+        return promise.resolve()
+        .then(function () {
+            return new promise(function (resolve, reject) {
+                try {
+                    resolve(fn.apply(scope || null, args));
+                }
+                catch(ex) {
+                    reject(ex);
+                }
+            });
         });
     };
 }
