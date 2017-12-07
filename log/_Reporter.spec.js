@@ -4,11 +4,14 @@ function testReporter1(arrange, act, assert, callback, module) {
 
   arrange(function () {
     reporter = module(["TruJS.log._Reporter", []]);
-    handler = callback();
-
   });
 
-  act(function () {
+  act(function (done) {
+    handler = callback(function () {
+        if (handler.callbackCount === 4) {
+            done();
+        }
+    });
     reporter.addHandler(handler);
     reporter.info("info"); //should fire
     reporter.extended("extended");
@@ -44,16 +47,18 @@ function testReporter1(arrange, act, assert, callback, module) {
 }
 
 /**[@test({ "title": "TruJS.log._Reporter: multiple handlers" })]*/
-function testReporter1(arrange, act, assert, callback, module) {
+function testReporter2(arrange, act, assert, callback, module) {
   var reporter, handler1, handler2;
 
   arrange(function () {
     reporter = module(["TruJS.log._Reporter", []]);
     handler1 = callback();
-    handler2 = callback();
   });
 
-  act(function () {
+  act(function (done) {
+      handler2 = callback(function () {
+        done();
+      });
     reporter.addHandler(handler1);
     reporter.info("info1"); //should fire
     reporter.addHandler(handler2);
@@ -73,15 +78,19 @@ function testReporter1(arrange, act, assert, callback, module) {
 }
 
 /**[@test({ "title": "TruJS.log._Reporter: setting levels, comma delimeted" })]*/
-function testReporter1(arrange, act, assert, callback, module) {
+function testReporter3(arrange, act, assert, callback, module) {
   var reporter, handler;
 
   arrange(function () {
     reporter = module(["TruJS.log._Reporter", []]);
-    handler = callback();
   });
 
-  act(function () {
+  act(function (done) {
+    handler = callback(function () {
+        if (handler.callbackCount === 3) {
+            done();
+        }
+    });
     reporter.addHandler(handler);
     reporter.setLevels("info,extended,metric");
     reporter.info("info"); //should fire
@@ -112,15 +121,19 @@ function testReporter1(arrange, act, assert, callback, module) {
 }
 
 /**[@test({ "title": "TruJS.log._Reporter: setting level to all" })]*/
-function testReporter1(arrange, act, assert, callback, module) {
+function testReporter4(arrange, act, assert, callback, module) {
   var reporter, handler;
 
   arrange(function () {
     reporter = module(["TruJS.log._Reporter", []]);
-    handler = callback();
   });
 
-  act(function () {
+  act(function (done) {
+    handler = callback(function () {
+        if (handler.callbackCount === 5) {
+            done();
+        }
+    });
     reporter.addHandler(handler);
     reporter.setLevels("all");
     reporter.info("info"); //should fire
