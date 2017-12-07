@@ -2,6 +2,7 @@
   "type": "module"
   , "name": "TruJS"
   , "description": "This is a collection of all the TruJS files for testing purposes"
+  , "version": "0.0.2"
 
   , "scripts": ""
   , "module": {
@@ -19,6 +20,7 @@
   "type": "module"
   , "name": "TruJS"
   , "description": "This is a collection of all the TruJS files for testing purposes"
+  , "version": "0.0.2"
 
   , "scripts": ""
   , "module": {
