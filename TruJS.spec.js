@@ -395,8 +395,35 @@ function testTruJS18(arrange, act, assert, trujs) {
         test('The noargs value should not be an Arguments type').value(noArgsRes).isFalse();
     });
 }
-/**[@test({ "title": "isPrototypeKey: create a prototype chain and test keys" })]*/
+/**[@test({ "title": "isProp: create an object and check for properties" })]*/
 function testTruJS19(arrange, act, assert, trujs) {
+    var obj, is1, is2;
+
+    arrange(function () {
+        obj = {
+            "key1": "value1"
+            , "key3": "value2"
+        };
+    });
+
+    act(function () {
+        is1 = trujs.isProp(obj, 'key1');
+        is2 = trujs.isProp(obj, 'key2');
+    });
+
+    assert(function (test) {
+        test("is1 should be true")
+        .value(is1)
+        .isTrue();
+
+        test("is2 should be false")
+        .value(is2)
+        .isFalse();
+
+    });
+}
+/**[@test({ "title": "isPrototypeKey: create a prototype chain and test keys" })]*/
+function testTruJS20(arrange, act, assert, trujs) {
     var base, obj, is1, is2;
 
     arrange(function () {
@@ -421,7 +448,7 @@ function testTruJS19(arrange, act, assert, trujs) {
     });
 }
 /**[@test({ "title": "merge: " })]*/
-function testTruJS20(arrange, act, assert, trujs) {
+function testTruJS21(arrange, act, assert, trujs) {
     var obj1, obj2, merged;
 
     arrange(function () {
@@ -451,10 +478,52 @@ function testTruJS20(arrange, act, assert, trujs) {
         .stringify()
         .equals("{\"var1\":\"test1\",\"var2\":{\"in1\":\"test2.1\",\"in2\":\"test2.2\"},\"var4\":null}");
 
+        test("merged shoud not be")
+        .value(merged)
+        .not()
+        .equals(obj1);
+
+    });
+}
+/**[@test({ "title": "update: " })]*/
+function testTruJS22(arrange, act, assert, trujs) {
+    var obj1, obj2, updated;
+
+    arrange(function () {
+        //setup the objects
+        obj1 = {
+            var1: "test1"
+            , var2: {
+                "in1": "test2.1"
+            }
+        };
+        obj2 = {
+            var1: "test2"
+            , var2: {
+                "in2": "test2.2"
+            }
+            , var4: null
+        };
+    });
+
+    act(function () {
+        updated = trujs.update(obj1, obj2);
+    });
+
+    assert(function (test) {
+        test('merged should be')
+        .value(updated)
+        .stringify()
+        .equals("{\"var1\":\"test1\",\"var2\":{\"in1\":\"test2.1\",\"in2\":\"test2.2\"},\"var4\":null}");
+
+        test("merged shoud not be")
+        .value(updated)
+        .equals(obj1);
+
     });
 }
 /**[@test({ "title": "resolvePath" })]*/
-function testTruJS21(arrange, act, assert, trujs) {
+function testTruJS23(arrange, act, assert, trujs) {
     var obj, res;
 
     arrange(function () {
@@ -490,6 +559,30 @@ function testTruJS21(arrange, act, assert, trujs) {
         test("res.path should be")
         .value(res.path)
         .equals("level1.level2[1].value");
+
+    });
+}
+/**[@test({ "title": "resolvePath: create" })]*/
+function testTruJS24(arrange, act, assert, trujs) {
+    var obj, res;
+
+    arrange(function () {
+        obj = {
+            "level1": {
+                "key": 0
+            }
+        };
+    });
+
+    act(function () {
+        trujs.resolvePath("level1.level2[level1.key]", obj, true);
+    });
+
+    assert(function (test) {
+        test("the object should be")
+        .value(obj)
+        .stringify()
+        .equals("{\"level1\":{\"key\":0,\"level2\":[{}]}}");
 
     });
 }

@@ -36,7 +36,7 @@ function _RegEx() {
         , pos
         ;
         if (val == null) {
-            return matches;
+            return;
         }
         patt.lastIndex = 0;
         while ((match = patt.exec(val)) !== null) {

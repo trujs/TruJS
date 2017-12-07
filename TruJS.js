@@ -2,10 +2,11 @@
 /**
 * Resolves an object from a path in dot notation
 * @function resolvePath
-* @param {string} path The path in dot notation
+* @param {string} name The path in dot notation
 * @param {object} scope The starting point.
+* @param {boolean} create Identifies if the missing paths should be created
 */
-function resolvePath(name, scope) {
+function resolvePath(name, scope, create) {
     var orig = scope
     , ns
     , match
@@ -27,7 +28,7 @@ function resolvePath(name, scope) {
                 val = '"' + val + '"';
             }
         }
-        return "[" + val + "]";
+        return "." + val + "";
     });
 
     //split the name using the dot notation
@@ -37,19 +38,14 @@ function resolvePath(name, scope) {
     ns.forEach(function (val, pos) {
         //if we still have a scope
         if (!!scope && !!val) {
-            //if this has an indexer in it [] then resolve it
-            INDX_PATT.lastIndex = 0;
-            if ((match = INDX_PATT.exec(val))) {
-                scope = scope[match[1]];
-                path = path + (!!path && "." || "") + match[1];
-                val = match[2];
-                //update the path
-                pos < ns.length && (path = path + '[' + val + ']');
+            //update the path
+            if (isNumeric(val)) {
+                pos < ns.length && (path = path + "[" + val + "]");
             }
             else {
-                //update the path
                 pos < ns.length && (path = path + (!!path && "." || "") + val);
             }
+
             //remove any quotes
             if (STR_PATT.test(val)) {
                 val = val.substring(1, val.length - 1);
@@ -57,6 +53,14 @@ function resolvePath(name, scope) {
 
             parent = scope;
             index = val;
+            if (create && !scope.hasOwnProperty(val)) {
+                if (isNumeric(ns[pos + 1])) {
+                    scope[val] = [];
+                }
+                else {
+                    scope[val] = {};
+                }
+            }
             scope = scope[val];
         }
     });
@@ -72,7 +76,6 @@ function resolvePath(name, scope) {
 }
 var SPLIT_PATH = /[.]/g
 , INDXR_PATT = /\[(.+?)\]/g
-, INDX_PATT = /^([^\[]+)\[([^\]]+)\]$/
 , LITERAL_PATT = /^[0-9]+$|^'.*'$|^".*"$/
 , STR_PATT = /^'.*'$|^".*"$/;
 TruJS.resolvePath = resolvePath;
@@ -171,11 +174,44 @@ TruJS.removeNulls = removeNulls;
 * @function
 */
 function merge(o1, o2) {
+    var o3 = copy(o1);
     //loop through the first objects properties
     Object.keys(o1).forEach(function forEachKey(key) {
         if (o2.hasOwnProperty(key)) {
             if (isObject(o1[key]) && isObject(o2[key])) {
-                o1[key] = merge(o1[key], o2[key]);
+                o3[key] = merge(o1[key], o2[key]);
+                return;
+            }
+        }
+    });
+    //loop through the second objects properties
+    Object.keys(o2).forEach(function forEachKey(key) {
+        if (!o1.hasOwnProperty(key)) {
+            if (isObject(o2[key])) {
+                o3[key] = copy(o2[key]);
+            }
+            else {
+                o3[key] = o2[key];
+            }
+        }
+    });
+
+    return o3;
+}
+TruJS.merge = merge;
+
+/**
+* Updates o1 with any properties on o2 that don't exist on o1. If the property
+* on o1 is an object and the property on o2 is an object, then it will run an
+* update with those properties
+* @function
+*/
+function update(o1, o2) {
+    //loop through the first objects properties
+    Object.keys(o1).forEach(function forEachKey(key) {
+        if (o2.hasOwnProperty(key)) {
+            if (isObject(o1[key]) && isObject(o2[key])) {
+                update(o1[key], o2[key]);
                 return;
             }
         }
@@ -189,7 +225,8 @@ function merge(o1, o2) {
 
     return o1;
 }
-TruJS.merge = merge;
+TruJS.update = update;
+
 /**
 * Creates a deep copy of the object
 * @function
@@ -355,6 +392,16 @@ function isPromise(o) {
     return typeof o === 'object' && (o instanceof Promise || Object.getPrototypeOf(o) === Promise || Promise.resolve(o) === o) || false;
 }
 TruJS.isPromise = isPromise;
+
+/**
+* Checks to see if the key is a property of the object
+* @function
+* @param {value} v The value to test
+*/
+function isProp(o, k) {
+    return isObject(o) && o.hasOwnProperty(k) || false;
+}
+TruJS.isProp = isProp;
 
 /**
 * Checks to see if the key `k` is a prototype property of object `o`
