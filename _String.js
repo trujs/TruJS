@@ -3,11 +3,12 @@
 * @factory
 */
 function _String(arrayOfType) {
+  var me;
 
   /**
   * @worker
   */
-  return Object.create(null, {
+  return me = Object.create(null, {
       /**
       * Creates a new string by applying the data to the string
       * @wrench String.prototype.apply
@@ -252,6 +253,16 @@ function _String(arrayOfType) {
           }
           return valArr;
         }
+      }
+      /**
+      * converts the first character to lowercase
+      * @function
+      */
+      , "camelCase": {
+          "enumerable": true
+          , "value": function camelCase(str) {
+              return str.substring(0, 1).toLowerCase() + str.substring(1);
+          }
       }
   });
 }

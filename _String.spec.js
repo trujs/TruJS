@@ -220,3 +220,22 @@ function testString10(arrange, act, assert, module) {
         .equals("test/test");
     });
 }
+/**[@test({ "title": "TruJS.String.camelCase: "})]*/
+function testString11(arrange, act, assert, module) {
+    var camelCase, text, res;
+
+    arrange(function () {
+      camelCase = module(["TruJS._String", []]).camelCase;
+      text = "TestValue";
+    });
+
+    act(function () {
+        res = camelCase(text);
+    });
+
+    assert(function (test) {
+        test("res should be")
+        .value(res)
+        .equals("testValue");
+    });
+}
