@@ -4,7 +4,7 @@
 *
 * @factory
 */
-function _Reporter(isInteger) {
+function _Reporter(promise, funcAsync) {
   /**
   * Represents the public object for reference instead of `this`
   * @property
@@ -21,6 +21,19 @@ function _Reporter(isInteger) {
   */
   , levels = ["info","error","stack"]
   ;
+
+  /**
+  * Fires the handlers asyncronously
+  * @function
+  */
+  function fireHandlers(level, msg) {
+      if (!isEmpty(handlers)) {
+          //loop through each handler and execute each one
+          handlers.forEach(function forEachHandler(handler) {
+              funcAsync(handler, [msg, level]);
+          });
+      }
+  }
 
   /**
   * @worker
@@ -48,10 +61,8 @@ function _Reporter(isInteger) {
         if (levels.indexOf(level) === -1 && levels.indexOf("all") === -1) {
           return;
         }
-        //loop through each handler and execute each one
-        handlers.forEach(function forEachHandler(handler) {
-          handler(msg, level);
-        });
+        //fire the handlers
+        fireHandlers(level, msg);
       }
     }
     , "info": {
