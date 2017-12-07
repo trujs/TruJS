@@ -128,11 +128,11 @@ function (functionInspector, objectLookup, iocEntry) {
                 // otherwise ust resolve the item
                 else {
                   item = resolveItem(item);
+                  if (obj[val] !== item) {
+                      obj[val] = item;
+                  }
                 }
 
-                if (obj[val] !== item) {
-                    obj[val] = item;
-                }
                 obj = item;
 
                 //see if the item exists
