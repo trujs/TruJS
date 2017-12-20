@@ -3,18 +3,40 @@
 * @factory
 */
 function _StyleHelper() {
+    var URL_PATT = /url\(("|')(.+)(\1)\)/g
+    , URL_VAL_PATT = /\$url-([0-9]+)/g
 
     /**
     * converts the css text to a css object
     * @function
     */
     function createCssObj(el) {
-        var css = el.style.cssText.split(";")
+        var css = el.style.cssText
+        , urls = []
         , cssObj = {};
 
+        //remove any url data as that could have semi-colons in it
+        css = css.replace(URL_PATT, function (m, q, u) {
+            return "url('$url-" + (urls.push(u) - 1) + "')";
+        });
+
+        //split the css by it's seperator
+        css = css.split(";");
+
         for (var i = 0, l = css.length; i < l; i++) {
-            var keyVal = css[i].split(":");
-            cssObj[keyVal[0]] = keyVal[1];
+            if (!!css[i]) {
+                var keyVal = css[i].split(":")
+                , key = keyVal.reverse().pop().trim()
+                , val = keyVal.reverse().join(":").trim();
+                //add the url value back
+                if (val.indexOf("$url") !== -1) {
+                    val = val.replace(URL_VAL_PATT, function (m, i) {
+                        return urls[i];
+                    });
+                }
+                cssObj[key] = val;
+            }
+
         }
 
         return cssObj;
