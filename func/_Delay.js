@@ -3,7 +3,7 @@
 *   setTimeout is canceled and a new one starts. Scope and parameters can be changed when the function is delayed
 * @factory
 */
-function _Delay($self, setTimeout, log, performance) {
+function _Delay($self, setTimeout, performance) {
 
     /**
     * Creates a `TruJS.func.Delay` object
@@ -89,7 +89,6 @@ function _Delay($self, setTimeout, log, performance) {
             catch (ex) {
                 token.exception = ex;
                 token.status = 'exception';
-                !!log && log.error('Delay.run', ex);
             }
         }
         /**
@@ -145,6 +144,13 @@ function _Delay($self, setTimeout, log, performance) {
             , "exception": {
                 "enumerable": true
                 , "get": function () { return token.exception; }
+            }
+            , "destroy": {
+                "enumerable": true
+                , "value": function () {
+                    cancel();
+                    token = null;
+                }
             }
         });
     };
