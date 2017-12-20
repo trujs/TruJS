@@ -109,15 +109,15 @@ function _ElementHelper(createElement, createTextNode, getElementById, getElemen
             //resolve the element
             el = getEl(el);
             //if there isn't an insert value we'll just append
-            if (isNill(insert)) {
+            if (isNill(insert) || !target.children[insert]) {
                 target.appendChild(el);
             }
                 //if the insert value is an integer then insert before
             else if (Number.isInteger(insert)) {
-                target.insertBefore(el, target[insert]);
+                target.insertBefore(el, target.children[insert]);
             }
             else {
-                throw new Error("Invalid insert value '" + integer + "', it must be an integer.");
+                throw new Error("Invalid insert value '" + insert + "', it must be an integer.");
             }
         }
     };
@@ -273,7 +273,7 @@ function _ElementHelper(createElement, createTextNode, getElementById, getElemen
         , "insert": {
             "enumerable": true
             , "value": function insert(el, target, index) {
-                addToTarget(el, target, insert);
+                addToTarget(el, target, index);
                 //return this for chaining
                 return this;
             }
