@@ -12,9 +12,10 @@ function _Performance(global) {
     func = performance.now.bind(performance);
   }
   else if (!!global.process) {
-    origin = calcNow() - (process.uptime() * SEC_MS);
+    origin = calcNow() - (process.uptime() / SEC_MS);
     func = function now() {
-      return calcNow() - origin;
+      var now = calcNow();
+      return now - origin;
     }
   }
   else {
@@ -30,7 +31,7 @@ function _Performance(global) {
   */
   function calcNow() {
     var hr = process.hrtime();
-    return hr[0] * SEC_MS + hr[1] * NS_MS;
+    return hr[0] / SEC_MS + hr[1] * NS_MS;
   }
 
   /**

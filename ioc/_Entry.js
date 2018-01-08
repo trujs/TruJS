@@ -35,13 +35,6 @@ function _Entry() {
       }
       return 'value';
   }
-  /**
-  *
-  * @function
-  */
-  function parseEntry() {
-
-  }
 
   /**
   * @worker
@@ -54,10 +47,6 @@ function _Entry() {
     , "getEntryType": {
       "enumerable": true
       , "value": getEntryType
-    }
-    , "parseEntry": {
-      "enumerable": true
-      , "value": parseEntry
     }
   });
 }
