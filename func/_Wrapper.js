@@ -71,7 +71,7 @@ function _Wrapper(functionInspector, performance) {
             var fnObj = functionInspector(fn);
             //store the function with it's meta data
             wrapped.fn = fn;
-            wrapped.name = fnObj.name || name;
+            wrapped.name = fnObj.name;
             wrapped.params = fnObj.params;
             return this;
         };

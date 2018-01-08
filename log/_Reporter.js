@@ -101,5 +101,23 @@ function _Reporter(promise, funcAsync) {
         }
       }
     }
+    , "data": {
+        "enumerable": true
+        , "value": function data(data) {
+            self.report("data", data);
+        }
+    }
+    , "group": {
+        "enumerable": true
+        , "value": function group(data) {
+            self.report("group", data);
+        }
+    }
+    , "groupEnd": {
+        "enumerable": true
+        , "value": function groupEnd(data) {
+            self.report("groupEnd", data);
+        }
+    }
   });
 }

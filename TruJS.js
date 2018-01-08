@@ -426,3 +426,23 @@ function isNumeric(v) {
     return NUM_PATT.test(v);
 }
 var NUM_PATT = /^[0-9]+(?:[.][0-9]+)?$/
+
+/**
+* Checks to see if the valu is a string
+* @function
+* @param {value} v The value to test
+*/
+function isString(v) {
+    return typeof v === "string";
+}
+TruJS.isString = isString;
+
+/**
+* Checks to see if the valu is a boolean
+* @function
+* @param {value} v The value to test
+*/
+function isBool(v) {
+    return typeof v === "boolean";
+}
+TruJS.isBool = isBool;

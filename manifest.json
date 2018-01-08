@@ -15,7 +15,7 @@
 
   , "format": "node"
 
-  , "output": "./build/{name}/index.js"
+  , "output": "./builds/{name}/index.js"
 }, {
   "type": "module"
   , "name": "TruJS"
@@ -35,7 +35,7 @@
   , "minify": false
   , "namespace": "TruJS"
 
-  , "output": "./build/{name}/app.js"
+  , "output": "./builds/{name}/app.js"
 }, {
   "type": "test"
   , "name": "TruJS"
@@ -44,7 +44,7 @@
 
   , "format": "node"
 
-  , "output": "./build/{name}/node-test.json"
+  , "output": "./builds/{name}/node-test.json"
 }, {
   "type": "test"
   , "name": "TruJS"
@@ -57,5 +57,5 @@
   , "moduleName": "TruJS"
   , "testFile": "browser-test.js"
 
-  , "output": "./build/{name}/"
+  , "output": "./builds/{name}/"
 }]

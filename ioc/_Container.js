@@ -37,11 +37,14 @@
 * @module TruJS.ioc._Container
 * @param {function} functionInspector A function that inspects a function and returns an object
 */
-function (functionInspector, objectLookup, iocEntry) {
+function _Container(functionInspector, objectLookup, iocEntry) {
     //*******************************************
     // static variables
     var PATH_PATT = /[^.\[\]_]+|\[([0-9]+)\]/g
     , SPLIT_PATT = /[.]|\[|\]/
+    , cnsts = {
+        "dependenciesAlias": "$dependencies"
+    }
     ;
 
     //*******************************************
@@ -73,6 +76,7 @@ function (functionInspector, objectLookup, iocEntry) {
         * @param {string} depName The name of the dependency to resolve. Names prefixed with a dot are looked up in the dependency list, otherwise the name is looked up in the global
         */
         function resolveDependency(depName, defaultValue) {
+            //console.log("Resolve Dependency: " + depName);
             //get the dependency
             var dep, factory, args;
             //if the name starts with a dot then resolve using the dependency list
@@ -109,6 +113,7 @@ function (functionInspector, objectLookup, iocEntry) {
         *
         */
         function resolveDepPath(name) {
+            //console.log("Resolve Dep Path: " + name);
             var obj = dependencies, item;
             //the regex should split the name by . or [] or _
             name.match(PATH_PATT).every(function (val, indx, ar) {
@@ -148,6 +153,7 @@ function (functionInspector, objectLookup, iocEntry) {
         * @function resolveFactory
         */
         function resolveFactory(dep) {
+            //console.log("Resolve Factory: " + dep[0]);
             //standardize the item's config
             setItemConfig(dep);
             //resolve the factory
@@ -203,10 +209,12 @@ function (functionInspector, objectLookup, iocEntry) {
         * @function runFactory
         */
         function runFactory(factory, args, config) {
+            //console.log("Run Factory: ");
             //if the runFactory option is set
             if (config.runFactory) {
                 //get the factory's arguments
-                var fnArgs = functionInspector(factory).params;
+                var fnArgs = factory[cnsts.dependenciesAlias]
+                    || functionInspector(factory).params;
                 //if there are factory arguments then use them
                 if (fnArgs.length > 0) {
                     //combine the item args and the function args
@@ -271,6 +279,7 @@ function (functionInspector, objectLookup, iocEntry) {
         */
         function resolveItem(dep) {
             var entryType = iocEntry.getEntryType(dep);
+            //console.log("Resolve Item: " + entryType);
             switch (entryType) {
                 case "factory":
                     return resolveFactory(dep);
@@ -306,6 +315,7 @@ function (functionInspector, objectLookup, iocEntry) {
         * @param {array} args The arguments array
         */
         function resolveEntryArgs(self, args) {
+            //console.log("Resolve Entry Args: " + JSON.stringify(args));
             //loop through the args and resolve each one
             return args.map(function (val) {
                 if (isSelf(val)) {
@@ -331,7 +341,6 @@ function (functionInspector, objectLookup, iocEntry) {
                 return null;
             });
         }
-
         /**
         * Tests to see if the value represents the $self built in dependency
         * @function
@@ -432,6 +441,8 @@ function (functionInspector, objectLookup, iocEntry) {
         */
         dependencies["$container"] = Container;
         function Container(entry) {
+            //console.log("Start resolution: ");
+            //console.log(entry);
             if (typeof (entry) === 'string') {
                 return resolveDependency(entry, arguments[1]);
             }

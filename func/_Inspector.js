@@ -8,81 +8,63 @@ function _Inspector() {
     //**************************************************
     // static variables
     /**
-    * RegEx used to extract the parameters from a function
+    * RegEx used to extract the name, parameters, and body from a function
     * @property PARAM_LOOKUP
     * @private
     * @static
     */
-    var PARAM_LOOKUP = /^function\s*(?:[A-z0-9_-]+\s*)?\((.*?)\)[^{]*{/i
+    var FN_LOOKUP = /^[\s\r\n]*function[\s\r\n]*([\s\r\n]*[A-z0-9_-]+[\s\r\n]*)?[\s\r\n]*\((.*?)\)[^{]*\{((?:.|\r|\n)*)\}[\s\r\n]*$/i
     /**
-    * RegEx used to extract the name from a function
-    * @property FN_NAME_LOOKUP
+    * RegEx used to remove the comments from a function
+    * @property COM_PATT
     * @private
     * @static
     */
-    , FN_NAME_LOOKUP = /^function\s*([^(]*)?\(/i
+    , COM_PATT = /(?:\/\/.*)|(?:\/[*](?:.|\r?\n)*?[*]\/)/gm
+    /**
+    * RegEx used to remove line endings
+    * @property COM_PATT
+    * @private
+    * @static
+    */
+    , LN_END_PATT = /\r?\n/g
     ;
 
     /**
-    * Extracts an array of parameters from the function
-    * @function getParams
-    * @params {function} fn The function to be inspected
-    * @private
-    * @static
+    * Remove all comments from the function text
+    * @function
     */
-    function getParams(fn) {
-        //get the parameter part of the function
-        var funcStr = fn.toString().replace(/\r?\n/g, '')
-        , params = funcStr.match(PARAM_LOOKUP)
-        ;
-        if (!params) {
-            throw new Error("The function is not in a valid format");
-        }
-        //get the first group
-        params = params[1];
-        //see if the result is an empty string
-        if (params.length === 0) {
-            return [];
-        }
-        //split the result
-        params = params.split(',');
-        //remove comments
-        params = params.map(function (val) {
-            return val.replace(/(\/[^\/]*\/)/, '').trim();
-        });
-        //return the results
-        return params;
-    };
-    /**
-    * Extracts the name of the function, using `anonymous` if a name is missing
-    * @function getFnName
-    * @params {function} fn The function to be inspected
-    * @private
-    * @static
-    */
-    function getFnName(fn) {
-        return fn.toString().match(FN_NAME_LOOKUP)[1] || 'anonymous';
-    };
-    /**
-    * Extracts the body of the function.
-    * @function _getBody
-    * @params {function} fn The function to be inspected
-    * @private
-    * @static
-    */
-    function getBody(fn) {
-        var body = fn.toString()
-        , start = body.indexOf('{')
-        , end = body.lastIndexOf('}')
-        ;
-        //return the body
-        return body.substring(start + 1, end).trim();
-    };
+    function removeComments(fn) {
+        return fn.toString().replace(COM_PATT, "");
+    }
 
     /**
     * @worker
     */
     return function FunctionInspector(fn) {
+        var fnText = removeComments(fn)
+        , match = fnText.match(FN_LOOKUP)
+        , name = !!match && match[1]
+        , params = !!match && match[2]
+        , body = !!match && match[3];
+
+        if (!match) {
+            throw new Error("The function is not in a valid format");
+        }
+
+        //see if the result is an empty string
+        if (params.length === 0) {
+            params = [];
+        }
+        else {
+            //split the result
+            params = params.split(',');
+            //remove comments
+            params = params.map(function (val) {
+                return val.replace(COM_PATT, "").trim();
+            });
+        }
+
         /**
         * An object that holds the function meta data
         * @type FunctionMeta
@@ -92,15 +74,15 @@ function _Inspector() {
         return Object.create(null, {
             "params": {
                 "enumerable": true
-                , "value": getParams(fn)
+                , "value": params
             }
             , "name": {
                 "enumerable": true
-                , "value": getFnName(fn)
+                , "value": name
             }
             , "body": {
                 "enumerable": true
-                , "value": getBody(fn)
+                , "value": body
             }
         });
     };
