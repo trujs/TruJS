@@ -65,6 +65,12 @@ function _Reporter(promise, funcAsync) {
         fireHandlers(level, msg);
       }
     }
+    , "log": {
+        "enumerable": true
+        , "value": function info(msg) {
+          self.report("log", msg);
+        }
+    }
     , "info": {
       "enumerable": true
       , "value": function info(msg) {
