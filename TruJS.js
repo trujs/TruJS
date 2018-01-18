@@ -384,6 +384,16 @@ function isCollection(o) {
 TruJS.isCollection = isCollection;
 
 /**
+* Test the toString value for List
+* @function isArguments
+* @param {object} o The object to test
+*/
+function isList(o) {
+    return Object.prototype.toString.call(o).indexOf('List') !== -1;
+}
+TruJS.isList = isList;
+
+/**
 * Test the obj to see if it is a Promise
 * @function isPromise
 * @param {object} o The object to test
