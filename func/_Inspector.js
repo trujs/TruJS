@@ -13,7 +13,7 @@ function _Inspector() {
     * @private
     * @static
     */
-    var FN_LOOKUP = /^[\s\r\n]*function[\s\r\n]*([\s\r\n]*[A-z0-9_-]+[\s\r\n]*)?[\s\r\n]*\((.*?)\)[^{]*\{((?:.|\r|\n)*)\}[\s\r\n]*$/i
+    var FN_LOOKUP = /^[\s\r\n\t ]*function[\s\r\n\t ]*([\s\r\n\t ]*[A-z0-9_-]+[\s\r\n\t ]*)?[\s\r\n\t ]*\(((?:.|\r|\n)*?)\)[^{]*\{((?:.|\r|\n)*)\}[\s\r\n\t ]*$/i
     /**
     * RegEx used to remove the comments from a function
     * @property COM_PATT

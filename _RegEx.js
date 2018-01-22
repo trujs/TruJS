@@ -26,6 +26,17 @@ function _RegEx() {
         }
     }
     /**
+    * Gets the first match
+    * @function
+    */
+    , "getFirstMatch": {
+        "enumerable": true
+        , "value": function getFirstMatch(patt, val) {
+            patt.lastIndex = 0;
+            return patt.exec(val);
+        }
+    }
+    /**
     * Executes the `fn` for each match when evaluating `val` with `patt`
     * @function
     */
@@ -60,6 +71,15 @@ function _RegEx() {
         }
       }
     }
+    /**
+    * Checks the value for at least one match with patt
+    * @function
+    */
+    , "hasMatch": {
+        "enumerable": true
+        , "value": function hasMatch(patt, val) {
+            return self.getFirstMatch(patt, val) !== null;
+        }
+    }
   });
-
 }
