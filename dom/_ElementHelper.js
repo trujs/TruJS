@@ -2,7 +2,7 @@
 * Object initializer for the `TruJS.dom.ElementHelper` object
 * @factory
 */
-function _ElementHelper(createElement, createTextNode, getElementById, getElementsByTagName, querySelector) {
+function _ElementHelper(createElement, createTextNode, getElementById, getElementsByTagName, querySelector, createElementNs) {
 
     /**
     *
@@ -75,9 +75,12 @@ function _ElementHelper(createElement, createTextNode, getElementById, getElemen
     * @function
     */
     function applyAttributes(el, attributes) {
-        if (!!attributes) {
+        if (isObject(attributes)) {
             //apply the attribute object to the element
-            apply(attributes, el);
+            Object.keys(attributes)
+            .forEach(function forEachAttr(attr) {
+                el.setAttribute(attr, attributes[attr]);
+            });
         }
     };
     /**
@@ -166,7 +169,7 @@ function _ElementHelper(createElement, createTextNode, getElementById, getElemen
     function createEl(config) {
         //create the element
         var tag = !!config && config.tag || 'div'
-        , el = tag !== 'text' && createElement(tag) || createTextNode(config.value)
+        , el = tag !== 'text' && (!!config.ns && createElementNs(config.ns, tag) || createElement(tag)) || createTextNode(config.value)
         ;
         //if there is a config then we'll do some additional operations
         if (!!config) {
