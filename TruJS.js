@@ -64,9 +64,11 @@ function resolvePath(name, scope, create) {
                 }
             }
 
-            if (val in scope) {
-                scope = scope[val];
-                return true;
+            if (isObject(scope)) {
+                if (val in scope) {
+                    scope = scope[val];
+                    return true;
+                }
             }
 
             scope = undefined;
