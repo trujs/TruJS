@@ -57,7 +57,7 @@ function resolvePath(name, scope, create) {
             index = val;
 
 
-            if (isObject(scope) || isArray(scope)) {
+            if (typeof scope === "object") {
                 if (val in scope) {
                     scope = scope[val];
                     return true;
