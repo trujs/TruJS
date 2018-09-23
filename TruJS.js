@@ -55,18 +55,20 @@ function resolvePath(name, scope, create) {
 
             parent = scope;
             index = val;
-            if (create && !scope.hasOwnProperty(val)) {
-                if (isNumeric(ns[pos + 1])) {
-                    scope[val] = [];
-                }
-                else {
-                    scope[val] = {};
-                }
-            }
 
-            if (isObject(scope)) {
+
+            if (isObject(scope) || isArray(scope)) {
                 if (val in scope) {
                     scope = scope[val];
+                    return true;
+                }
+                else if (create) {
+                    if (isNumeric(ns[pos + 1])) {
+                        scope[val] = [];
+                    }
+                    else {
+                        scope[val] = {};
+                    }
                     return true;
                 }
             }
