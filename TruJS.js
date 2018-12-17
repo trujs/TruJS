@@ -13,6 +13,7 @@ function resolvePath(name, scope, create) {
     , parent
     , index
     , path = ""
+    , found
     , indexKeys = [];
 
     //pre-compile the indexers
@@ -35,7 +36,8 @@ function resolvePath(name, scope, create) {
     ns = name.split(SPLIT_PATH);
 
     //loop through the names
-    ns.forEach(function (val, pos) {
+    found =
+    ns.every(function (val, pos) {
         //if we still have a scope
         if (!!scope && !!val) {
             //update the path
@@ -53,15 +55,29 @@ function resolvePath(name, scope, create) {
 
             parent = scope;
             index = val;
-            if (create && !scope.hasOwnProperty(val)) {
-                if (isNumeric(ns[pos + 1])) {
-                    scope[val] = [];
+
+
+            if (typeof scope === "object") {
+                if (val in scope) {
+                    scope = scope[val];
+                    return true;
                 }
-                else {
-                    scope[val] = {};
+                else if (create) {
+                    if (isNumeric(ns[pos + 1])) {
+                        scope[val] = [];
+                    }
+                    else {
+                        scope[val] = {};
+                    }
+                    return true;
                 }
             }
-            scope = scope[val];
+
+            scope = undefined;
+            return false;
+        }
+        else {
+            return false;
         }
     });
 
@@ -72,6 +88,7 @@ function resolvePath(name, scope, create) {
         , "index": index
         , "path": path
         , "indexKeys": indexKeys
+        , "found": found
     };
 }
 var SPLIT_PATH = /[.]/g
@@ -299,7 +316,7 @@ TruJS.isEmpty = isEmpty;
 * @param {object} o The object to test
 */
 function isElement(o) {
-    return !!o && /^\[object\s(HTML[A-z]*Element|Text)\]$/.test(Object.prototype.toString.call(o));
+    return !!o && /^\[object\s((HTML|SVG)[A-z]*Element|Text)\]$/.test(Object.prototype.toString.call(o));
 }
 TruJS.isElement = isElement;
 

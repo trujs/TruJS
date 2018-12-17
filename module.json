@@ -4,6 +4,7 @@
   , "promise": [":Promise"]
   , "setTimeout": [":setTimeout"]
   , "createElement": [".document.createElement", [], { "bind": { "scope": [".document"] }, "runFactory": false }]
+  , "createElementNs": [".document.createElementNS", [], { "bind": { "scope": [".document"] }, "runFactory": false }]
   , "createTextNode": [".document.createTextNode", [], { "bind": { "scope": [".document"] }, "runFactory": false }]
   , "array": ["TruJS._Array", []]
   , "arrayOfType": [".array.ofType"]
