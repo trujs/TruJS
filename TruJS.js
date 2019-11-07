@@ -14,7 +14,8 @@ function resolvePath(name, scope, create) {
     , index
     , path = ""
     , found
-    , indexKeys = [];
+    , indexKeys = []
+    , virtual;
 
     //pre-compile the indexers
     name = name.replace(INDXR_PATT, function(match, val) {
@@ -23,13 +24,13 @@ function resolvePath(name, scope, create) {
             indexKeys.push(val);
             val = resolvePath(val, orig).value;
             if (isNill(val)) {
-                val = "";
+                val = "[]";
             }
-            if (!isNumeric(val)) {
+            else if (!isNumeric(val)) {
                 val = '"' + val + '"';
             }
         }
-        return "." + val + "";
+        return "." + val;
     });
 
     //split the name using the dot notation
@@ -46,6 +47,13 @@ function resolvePath(name, scope, create) {
             }
             else {
                 pos < ns.length && (path = path + (!!path && "." || "") + val);
+            }
+
+            //if the val is [] that means this is an indexer with a variable
+            // meaning we need only record the path from here on
+            if (val === "[]" || virtual) {
+                virtual = true;
+                return true;
             }
 
             //remove any quotes
