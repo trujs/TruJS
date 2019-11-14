@@ -26,9 +26,6 @@ function resolvePath(name, scope, create) {
             if (isNill(val)) {
                 val = "[]";
             }
-            else if (!isNumeric(val)) {
-                val = '"' + val + '"';
-            }
         }
         return "." + val;
     });
