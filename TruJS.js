@@ -289,7 +289,7 @@ TruJS.getType = getType;
 * @function isArray
 */
 function isArray(o) {
-    return Object.prototype.toString.call(o) === '[object Array]';
+    return Array.isArray(o);
 }
 TruJS.isArray = isArray;
 
@@ -478,3 +478,12 @@ function isBool(v) {
     return typeof v === "boolean";
 }
 TruJS.isBool = isBool;
+/**
+* Checks to see if the value is a symbol
+* @function
+* @param {value} v The value to test
+*/
+function isSymbol(v) {
+    return typeof v === "symbol";
+}
+TruJS.isSymbol = isSymbol;
